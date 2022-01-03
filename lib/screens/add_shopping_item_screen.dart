@@ -1,7 +1,6 @@
+import 'package:bv_yt_tut_einkaufsliste/database_helper.dart';
 import 'package:bv_yt_tut_einkaufsliste/models/shopping_item.dart';
 import 'package:flutter/material.dart';
-
-import '../config.dart';
 
 class AddShoppingItemScreen extends StatefulWidget {
   const AddShoppingItemScreen({Key? key}) : super(key: key);
@@ -15,8 +14,6 @@ class _AddShoppingItemScreenState extends State<AddShoppingItemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final shoppingList = context.dependOnInheritedWidgetOfExactType<Configuration>()!.shoppingList;
-
     final editedShoppingItem = ModalRoute.of(context)!.settings.arguments as ShoppingItem;
 
     bool inEditMode = editedShoppingItem.name != '';
@@ -43,13 +40,16 @@ class _AddShoppingItemScreenState extends State<AddShoppingItemScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (inEditMode) {
-                  ShoppingItem newShoppingItem = editedShoppingItem.copyWith(name: _textEditingController.text);
-                  int indexOfEditedItem = shoppingList.indexOf(editedShoppingItem);
-                  shoppingList[indexOfEditedItem] = newShoppingItem;
+                  // ShoppingItem newShoppingItem = editedShoppingItem.copyWith(name: _textEditingController.text);
+                  // int indexOfEditedItem = shoppingList.indexOf(editedShoppingItem);
+                  // shoppingList[indexOfEditedItem] = newShoppingItem;
+
+                  await DatabaseHelper.instance
+                      .update(ShoppingItem(name: _textEditingController.text, id: editedShoppingItem.id));
                 } else {
-                  shoppingList.add(ShoppingItem(name: _textEditingController.text, done: false));
+                  await DatabaseHelper.instance.add(ShoppingItem(name: _textEditingController.text));
                 }
 
                 _textEditingController.clear();
