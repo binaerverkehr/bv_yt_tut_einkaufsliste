@@ -26,7 +26,8 @@ class _ShoppingItemListScreenState extends State<ShoppingItemListScreen> {
       body: Center(
         child: FutureBuilder<List<ShoppingItem>>(
           future: DatabaseHelper.instance.getShoppingItems(),
-          builder: (BuildContext context, AsyncSnapshot<List<ShoppingItem>> snapshot) {
+          builder: (BuildContext context,
+              AsyncSnapshot<List<ShoppingItem>> snapshot) {
             if (!snapshot.hasData) {
               return Center(
                 child: Text('Loading...'),
@@ -39,40 +40,60 @@ class _ShoppingItemListScreenState extends State<ShoppingItemListScreen> {
                 : ListView(
                     children: snapshot.data!.map((item) {
                       return Slidable(
-                        actionPane: SlidableDrawerActionPane(),
-                        secondaryActions: [
-                          IconSlideAction(
-                            caption: 'Edit',
-                            color: Colors.black45,
-                            icon: Icons.edit,
-                            onTap: () {
-                              Navigator.pushNamed(context, '/add', arguments: item).then((value) => setState(() {}));
-                            },
-                          ),
-                          IconSlideAction(
-                            caption: 'Delete',
-                            color: Colors.red,
-                            icon: Icons.delete,
-                            onTap: () {
-                              setState(() {
-                                DatabaseHelper.instance.remove(item.id!);
-                              });
-                              _showSnackBar(context, '${item.name} deleted.');
-                            },
-                          ),
-                        ],
+                        startActionPane: ActionPane(
+                          motion: ScrollMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) {
+                                setState(() {
+                                  DatabaseHelper.instance
+                                      .update(item.copyWith(done: !item.done));
+                                });
+                                _showSnackBar(
+                                    context,
+                                    item.done
+                                        ? '${item.name} marked as not done.'
+                                        : '${item.name} marked as done.');
+                              },
+                              backgroundColor:
+                                  item.done ? Colors.orange : Colors.green,
+                              foregroundColor: Colors.white,
+                              icon: item.done ? Icons.undo : Icons.check,
+                              label: item.done ? 'Undo' : 'Done',
+                            ),
+                          ],
+                        ),
+                        endActionPane: ActionPane(
+                          motion: ScrollMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) {
+                                setState(() {
+                                  DatabaseHelper.instance.remove(item.id!);
+                                });
+                                _showSnackBar(context, '${item.name} deleted.');
+                              },
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                          ],
+                        ),
                         child: CheckboxListTile(
                           title: Text(
                             item.name,
                             style: TextStyle(
                               color: item.done ? Colors.grey : null,
-                              decoration: item.done ? TextDecoration.lineThrough : null,
+                              decoration:
+                                  item.done ? TextDecoration.lineThrough : null,
                             ),
                           ),
                           value: item.done,
                           onChanged: (newValue) {
                             setState(() {
-                              DatabaseHelper.instance.update(item.copyWith(done: newValue));
+                              DatabaseHelper.instance
+                                  .update(item.copyWith(done: newValue));
                             });
                           },
                         ),
@@ -84,7 +105,8 @@ class _ShoppingItemListScreenState extends State<ShoppingItemListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/add', arguments: ShoppingItem(name: '', done: false))
+          Navigator.pushNamed(context, '/add',
+                  arguments: ShoppingItem(name: '', done: false))
               .then((value) => setState(() {}));
         },
         child: Icon(Icons.add),
