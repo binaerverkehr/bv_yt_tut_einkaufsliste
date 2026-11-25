@@ -1,6 +1,12 @@
-# bv_yt_tut_einkaufsliste
+# Flutter Einkaufsliste (YouTube-Tutorial)
 
-Youtube Tutorial:
+Begleitcode zur kleinen Einkaufslisten-App in Flutter aus dem YouTube-Tutorial:
 
-- [https://www.youtube.com/watch?v=DL4wRPhMaAc](https://www.youtube.com/watch?v=DL4wRPhMaAc)
+- Video ansehen: [YouTube Tutorial](https://www.youtube.com/watch?v=DL4wRPhMaAc)
 
+## Lokal starten
+
+```bash
+flutter pub get
+flutter run
+```
